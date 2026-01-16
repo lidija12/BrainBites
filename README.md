@@ -1,53 +1,47 @@
-````md
-# Dokumentation: BrainBites (Flashcards)
-
-Modul: **335 Mobile Applikation planen, entwickeln und publizieren**  
-Autor: **Lidija Srejic**  
-Datum: **24.01.2026**
-
----
-
 ## Überblick
 
-BrainBites ist eine Flashcards-App zum Lernen mit Karteikarten-Decks. Die App enthält mehrere eingebaute Beispiel-Decks auf Deutsch und ermöglicht es, eigene Decks und Karten über einen Create-Screen zu erstellen. Im Lernmodus kann man Karten umdrehen und durchgehen. Zusätzlich gibt es lokale Notifications als Lern-Erinnerungen.
+BrainBites ist eine Flashcards-App zum Lernen mit Karteikarten-Decks. Die App enthält **eingebaute Beispiel-Decks (Deutsch)** und ermöglicht es, eigene Decks und Karten zu erstellen.  
+Im Lernmodus können Karten umgedreht und durchgearbeitet werden. Zusätzlich gibt es lokale Erinnerungen via Notifications.
 
-**Technische Kernelemente (Modul-Anforderungen):**
+### Modul-Anforderungen (Kurzcheck)
+
 - **Sensor:** Accelerometer → Shake-Erkennung → Karten mischen (Shuffle)
 - **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
-- **Persistente Speicherung:** Firebase Firestore (Decks/Karten dauerhaft speichern)
-- **Authentifizierung:** Firebase Auth (E-Mail/Passwort)
+- **Persistente Speicherung:** Firebase Firestore → Decks/Karten dauerhaft speichern
+- **Authentifizierung:** Firebase Auth → E-Mail/Passwort
 
 ---
 
 ## Projektstruktur (aktueller Stand)
 
-> Hinweis: Die Struktur basiert auf Expo Router (file-based routing).
+> Hinweis: Die Struktur basiert auf **Expo Router** (file-based routing).
 
 ```text
-/BrainBites
-  /app
-    /(tabs)
-      _layout.js             # Tab-Navigation
-      index.js               # Deck-Übersicht (Home)
-      create.js              # Deck/Karte erstellen
-      settings.js            # Reminder + Logout
-    /deck
-      [deckId].js            # Deck-Detail
-      /[deckId]
-        study.js             # Lernmodus (Flashcards, Shuffle)
-    _layout.js               # Root Layout
-  /lib
-    firebase.js              # Firebase Init (Auth, Firestore)
-    seed.js                  # Beispiel-Decks / Seed-Daten (lokal)
-  /state
-    DeckStore.js             # State (Decks/Karten) / Datenlogik
-  /assets
+BrainBites/
+  app/
+    (tabs)/
+      _layout.js            # Tab-Navigation
+      index.js              # Deck-Übersicht (Home)
+      create.js             # Deck/Karte erstellen
+      settings.js           # Reminder + Logout
+    deck/
+      [deckId].js           # Deck-Detail
+      [deckId]/
+        study.js            # Lernmodus (Flashcards, Shuffle)
+    _layout.js              # Root Layout
+  lib/
+    firebase.js             # Firebase Init (Auth, Firestore)
+    seed.js                 # Beispiel-Decks / Seed-Daten (lokal)
+  state/
+    DeckStore.js            # State (Decks/Karten) / Datenlogik
+  assets/
     icon.png
   App.js
   app.json
   firestore.rules
   package.json
   README.md
+
 ````
 
 ---
