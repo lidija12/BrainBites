@@ -1,140 +1,253 @@
-# Dokumentation: BrainBites (Flashcards-Lernapp)
+# Dokumentation: BrainBites (Flashcards)
 
 Modul: **335 Mobile Applikation planen, entwickeln und publizieren**  
-Autorin: **Lidija Srejic**  
-Datum: **30.01.2026**
+Autor: **Lidija Srejic**  
+Datum: **24.01.2026**
 
 ---
 
 ## Überblick
 
-BrainBites ist eine Flashcards-App zum Lernen mit Karteikarten-Decks. Es gibt **Beispiel-Decks (Deutsch)** und man kann eigene **Decks/Karten** erstellen. Im Lernmodus werden Karten angezeigt und können interaktiv gelernt werden.
+BrainBites ist eine Flashcards-App zum Lernen mit Karteikarten-Decks. Die App enthält mehrere eingebaute Beispiel-Decks auf Deutsch und ermöglicht es, eigene Decks und Karten über einen Create-Screen zu erstellen. Im Lernmodus kann man Karten umdrehen und durchgehen. Über den Accelerometer-Sensor können Karten durch Schütteln (Shake) gemischt werden. Zusätzlich gibt es lokale Notifications als Lern-Erinnerungen.
 
-**Anforderungen erfüllt (Modul 335):**
-- **2 Aktoren/Sensoren:**  
-  1) **Accelerometer (Shake)** im Lernmodus (z.B. Karten mischen / Shuffle)  
-  2) **Lokale Notifications** (Reminder-Funktion)
-- **Persistente Storage:** **Firebase Firestore** (Decks/Karten dauerhaft speichern)
-- **Authentifizierung:** **Firebase Authentication** (E-Mail/Passwort Login + Registration)
+**Technische Kernelemente (Modul-Anforderungen):**
+- **Sensor:** Accelerometer → Shake-Erkennung → Karten mischen (Shuffle)
+- **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
+- **Persistente Speicherung:** Firebase Firestore (Decks/Karten dauerhaft speichern)
+- **Authentifizierung:** umgesetzt (Firebase Auth - E-Mail/Passwort)
 
 ---
 
-## Aufgabe 1: Mobile App – Anforderungen und Planung
+# Aufgabe 1: Anforderungen und Planung
 
-### 1.a) Storyboard und Screen-Abläufe
-Storyboard-Skizzen wurden auf Papier erstellt. (Ablage im Repo: `./storyboard/` als Bilder)
+## 1.a) Screen-Übersicht (Storyboard / Flow)
 
-**Screens / Flow:**
-1. **Login / Registrierung**: Einloggen oder Konto erstellen
-2. **Deck-Übersicht (Home)**: Decks anzeigen, öffnen
-3. **Deck-Details**: Kartenliste im Deck, Karten bearbeiten
-4. **Lernmodus**: Karten lernen/flippen, Navigation durch Karten, Shake-Feature
-5. **Create**: neues Deck + neue Karten erstellen
-6. **Settings**: Reminder einstellen (Wochentage + Uhrzeit), aktivieren/deaktivieren
+Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 
-### 1.b) Funktionalitäten (Liste)
-**Decks & Karten**
-- Beispiel-Decks vorhanden
-- Deck erstellen / umbenennen / löschen
-- Karten erstellen / bearbeiten / löschen
-- Lernmodus: Karte flippen, nächste/vorherige Karte
+**Screen 1: Login**
+- E-Mail + Passwort Eingabe
+- Button: Login
+- Fehleranzeige bei falschen Eingaben
+- Navigation: "Account erstellen" → Registrierung
 
-**Sensor/Aktor**
-- Accelerometer erkennt Schütteln → Kartenreihenfolge wird neu gemischt
-- Lokale Reminder-Notifications: Wochentage und Uhrzeit wählbar, aktivier-/deaktivierbar
+**Screen 2: Account erstellen (Registrierung)**
+- E-Mail + Passwort + Passwort bestätigen
+- Button: Registrieren
+- Navigation: Zurück zum Login
 
-### 1.c) Testplan (Anwendungsfälle als Testfälle)
+**Screen 3: Home / Deck-Übersicht**
+- Liste aller Decks (Beispiel-Decks + eigene Decks)
+- Suche/Filter (optional)
+- Button: „Neues Deck erstellen“
+- Navigation: Deck antippen → Deck-Details
 
-| ID  | Testfall | Vorbedingung | Aktion | Erwartetes Resultat |
+**Screen 4: Deck-Details**
+- Deckname
+- Buttons: „Lernen starten“, „Karten verwalten“
+- Option: Deck bearbeiten
+
+**Screen 5: Lernmodus (Study)**
+- Eine Karte zurzeit (Vorderseite → umdrehen → Rückseite)
+- Buttons: „Falsch“, „Richtig“ (oder „Weiter“)
+- Shake-Geste: Karten mischen (Shuffle)
+- Anzeige: Fortschritt (z.B. 3/20)
+
+**Screen 6: Karten verwalten (Create/Edit)**
+- Karte erstellen: Vorderseite + Rückseite
+- Kartenliste mit Bearbeiten(+)/Löschen
+- Speichern in Firebase Firestore
+
+**Screen 7: Einstellungen / Erinnerungen**
+- Erinnerungen aktivieren/deaktivieren
+- Uhrzeit/Intervall definieren
+- Test-Notification auslösen (optional)
+
+---
+
+## 1.b) Funktionale Anforderungen
+
+**Deck-Übersicht (Home)**
+- Die App zeigt eine Liste aller verfügbaren Decks an.
+- Es gibt eingebaute Beispiel-Decks (lokal, read-only) sowie eigene Decks des Benutzers.
+- Ein Deck kann ausgewählt werden, um Details anzusehen oder direkt den Lernmodus zu starten.
+- Über eine Aktion (z.B. Button) kann ein neues Deck erstellt werden.
+
+**Deck-Verwaltung (Create/Edit)**
+- Benutzer können eigene Decks erstellen (Deckname erfassen und speichern).
+- Eigene Decks können bearbeitet (z.B. umbenannt) und gelöscht werden.
+- Beispiel-Decks sind nicht editierbar, damit immer stabile Demo-Inhalte vorhanden sind.
+
+**Karten-Verwaltung (CRUD pro Deck)**
+- Zu einem Deck können Karten erstellt werden mit:
+  - Vorderseite (FrontText)
+  - Rückseite (BackText)
+- Karten können bearbeitet und gelöscht werden.
+- Validierung: Leere Eingaben sind nicht erlaubt (Speichern wird verhindert bzw. es wird ein Hinweis angezeigt).
+
+**Lernmodus (Study)**
+- Im Lernmodus wird jeweils eine Karte angezeigt.
+- Die Karte kann umgedreht (Flip Front/Back) werden.
+- Der Benutzer kann zur nächsten Karte wechseln und sieht einen Fortschritt (z.B. „3/20“).
+- Optional (je nach Umsetzung): einfache Bewertung wie „Gewusst / Nicht gewusst“ oder nur „Weiter“.
+
+**Sensor-Funktion (Accelerometer)**
+- Der Accelerometer wird im Lernmodus genutzt, um ein Schütteln (Shake) zu erkennen.
+- Bei erkannter Shake-Geste werden die Karten gemischt (Shuffle) und der Lernmodus läuft mit neuer Reihenfolge weiter.
+
+**Aktor-Funktion (Lokale Notifications)**
+- Benutzer können Lern-Erinnerungen aktivieren und deaktivieren.
+- Beim Aktivieren wird die Berechtigung für Notifications abgefragt.
+- Bei aktivierter Erinnerung wird eine lokale Notification zu einer definierten Zeit/Regel geplant (z.B. täglich).
+- Beim Deaktivieren werden geplante Notifications wieder entfernt.
+
+**Persistente Speicherung (Firebase Firestore)**
+- Eigene Decks und Karten werden in Firestore gespeichert und beim App-Start wieder geladen.
+- Beispiel-Decks bleiben lokal, damit die App sofort Inhalte hat (und als Demo jederzeit funktioniert).
+
+---
+
+## 1.c) Testplan (Anwendungsfälle als Testfälle)
+
+| ID  | Testfall | Vorbedingung | Schritte | Erwartetes Ergebnis |
 |---|---|---|---|---|
-| TC1 | Registrierung | Internet aktiv | E-Mail+Passwort → Registrieren | Konto erstellt, Weiterleitung zur App |
-| TC2 | Login | Konto vorhanden | E-Mail+Passwort → Login | Erfolgreich eingeloggt |
-| TC3 | Deck erstellen | Eingeloggt | Create → neues Deck speichern | Deck erscheint in Übersicht |
-| TC4 | Karte hinzufügen | Deck existiert | Karte erstellen → speichern | Karte erscheint im Deck |
-| TC5 | Lernmodus Flip | Deck hat Karten | Lernmodus öffnen → Karte antippen | Vorder-/Rückseite wechselt |
-| TC6 | Shake Shuffle | Lernmodus offen | Gerät schütteln | Kartenreihenfolge wird gemischt |
-| TC7 | Reminder aktivieren | Notifications erlaubt | Settings: Tage+Zeit → aktivieren | Notification wird geplant |
-| TC8 | Reminder deaktivieren | Reminder aktiv | Settings → deaktivieren | Notification wird entfernt |
+| TC1 | Registrierung | App gestartet | E-Mail/Passwort eingeben → Registrieren | Benutzerkonto wird erstellt, User ist eingeloggt |
+| TC2 | Login | Konto existiert | E-Mail/Passwort → Login | Login erfolgreich, Navigation in App |
+| TC3 | Deck-Liste | Eingeloggt | Home öffnen | Beispiel-Decks + eigene Decks werden angezeigt |
+| TC4 | Deck erstellen | Eingeloggt | „Neues Deck“ → Name → Speichern | Neues Deck erscheint in der Liste |
+| TC5 | Deck bearbeiten | Eigenes Deck existiert | Deck bearbeiten/umbenennen | Name wird gespeichert/aktualisiert |
+| TC6 | Deck löschen | Eigenes Deck existiert | Deck löschen | Deck ist entfernt |
+| TC7 | Karte erstellen | Eigenes Deck existiert | Karte hinzufügen (Front/Back) → Speichern | Karte erscheint in Kartenliste |
+| TC8 | Karte bearbeiten | Karte existiert | Karte bearbeiten → Speichern | Karte ist aktualisiert |
+| TC9 | Karte löschen | Karte existiert | Karte löschen | Karte ist entfernt |
+| TC10 | Lernmodus Flip | Deck mit Karten | Lernmodus öffnen → Karte antippen | Karte flippt (Front/Back) |
+| TC11 | Shake Shuffle | Lernmodus offen | Gerät schütteln | Kartenreihenfolge wird gemischt |
+| TC12 | Reminder Notifications | Permission erlaubt | Settings: Tage + Uhrzeit aktivieren | Notification wird geplant und kommt zur Zeit |
 
 ---
 
-## Aufgabe 2: Mobile App – Lösungskonzept erarbeiten
+# Aufgabe 2: Mobile App – Lösungskonzept erarbeiten (BrainBites)
 
-### 2.a) Framework und App-Typ
+## 2.a) Framework und App-Typ
+
 - **Framework:** Expo + React Native (JavaScript)
-- **App-Typ:** Hybrid/Cross-Platform App (Android/iOS)
-- **Navigation:** Expo Router (file-based routing; Tabs + Detailseiten)
+- **App-Typ:** Hybrid-/Cross-Platform App (eine Codebasis für iOS und Android)
+- **Entwicklungsumgebung:** Visual Studio Code oder IntelliJ + Expo CLI
+- **Navigation:** Expo Router (File-based Routing)
 
-**Wichtige Komponenten / Aufbau:**
-- `app/` → Screens & Navigation (Tabs, Login, Deck-Detail, Study)
-- `src/` → Logik (Auth, State/Services, Theme)
-- `lib/firebase.js` → Firebase Initialisierung (Auth/Firestore)
+**Warum Expo + React Native?**
+- Eine Codebasis für Android/iOS spart Zeit und reduziert Aufwand.
+- Expo stellt Sensoren (Accelerometer) und Notifications mit klaren APIs bereit.
+- Sehr gute Integration mit Firebase (Auth + Firestore).
+- Schnelle Iteration durch Hot Reload und einfache Build-/Run-Prozesse.
 
-### 2.b) Elemente genau beschreiben
-
-**Authentifizierung (Firebase Auth)**
-- Login/Registration via E-Mail/Passwort
-- Nach erfolgreichem Login: Zugriff auf App-Funktionen
-
-**Persistente Speicherung (Firestore)**
-- Decks und Karten werden dauerhaft gespeichert
-- CRUD: Erstellen/Lesen/Aktualisieren/Löschen von Decks & Karten
-
-**Sensor: Accelerometer**
-- Listener im Lernmodus
-- Shake-Threshold + Debounce/Cooldown
-- Bei Trigger: Shuffle-Funktion (sichtbarer Effekt)
-
-**Aktor: Lokale Notifications**
-- `expo-notifications` (Permissions + Android Channel)
-- Weekly Reminder: Auswahl Wochentage + Uhrzeit
-- Aktivieren/Deaktivieren: schedule / cancel
+**Projektstruktur (aktueller Stand + Ergänzungen)**
+**Wichtige Komponenten**
+- Decks Screen (index.js): Deck-Liste (Built-in + User-Decks)
+- Deck-Detail ([deckId].js): Deck-Infos und Navigation zum Lernmodus
+- Learn Screen (study.js): Karten anzeigen, Flip/Next/Prev, Shake→Shuffle
+- Create Screen (create.js): Deck/Karte erstellen, Validierung, Speichern
+- Settings Screen (settings.js): Reminder (Notifications), Logout
+- DeckStore (DeckStore.js): App-State (z. B. geladene Decks/Karten)
 
 ---
 
-## Aufgabe 3: Mobile App – Mobile App programmieren
+## 2.b) Umsetzung der Elemente (Sensor/Aktor, Storage, Auth)
 
-- **3.a Funktionalität & Mockups:** Deck-Flow, Create, Study, Settings umgesetzt wie geplant
-- **3.b Sensoren/Aktoren:** Accelerometer (Shake) + Notifications umgesetzt
+### Element 1: Sensor – Accelerometer (Shake → Shuffle)
+**Package:** expo-sensors
+
+**Funktionsweise**
+- Learn-Screen abonniert Accelerometer-Werte (z. B. alle 100ms).
+- Bei einem Shake (kurzer Beschleunigungs-„Spike“) wird ein Event ausgelöst.
+- Mit Cooldown (z. B. 900ms) Verhinderung von Mehrfachauslösung.
+- Kartenliste wird gemischt (z. B. Fisher–Yates) → Index auf 0 gesetzt.
+
+### Element 2: Aktor – Notifications (Lern-Erinnerung)
+**Package:** expo-notifications
+
+**Verwendung**
+- Im Settings-Screen kann der User Reminder aktivieren/deaktivieren.
+- Beim Aktivieren: Permission abfragen → lokale Notification planen (Wochentage + Uhrzeit).
+- Beim Deaktivieren: geplante Notifications löschen.
+
+### Element 3: Persistente Speicherung – Firebase Firestore
+**Package:** firebase (Firestore)
+
+**Prinzip**
+- Eigene Decks und Karten werden in Firestore gespeichert und beim Start geladen.
+- Beispiel-Decks sind lokal vorhanden (Demo/Offline möglich).
+
+*(Optional/je nach Umsetzung)* Echtzeit:
+- Deck-Liste über Listener (z. B. `onSnapshot`) gefiltert nach ownerUid
+- Karten über Listener in `decks/{deckId}/cards`
+
+### Element 4: Authentifizierung – Firebase Authentication
+**Package:** firebase (Auth)
+
+**Funktionen**
+- Registrierung: `createUserWithEmailAndPassword`
+- Login: `signInWithEmailAndPassword`
+- Logout: `signOut`
+- Session-Check: `onAuthStateChanged` (beim App-Start)
 
 ---
 
-## Aufgabe 4: Mobile App – Mobile App publizieren
+# Aufgabe 3: Mobile App – Mobile App programmieren
 
-### 4.a Schritte zum Publizieren (Android)
+## 3.a) Funktionalität und Mockups wie geplant umgesetzt
+- Screen-Flow gemäss Planung umgesetzt: Login/Registration → Home → Deck-Details → Study → Create/Edit → Settings
+- CRUD für eigene Decks/Karten umgesetzt
+- Validierungen umgesetzt (z.B. keine leeren Texte)
+
+## 3.b) Sensoren/Aktoren wie geplant umgesetzt
+- Accelerometer: Shake-Erkennung im Lernmodus → Shuffle
+- Notifications: Lokale Reminder planbar/aktivierbar/deaktivierbar (Settings)
+
+---
+
+# Aufgabe 4: Mobile App – Mobile App publizieren
+
+## 4.a) Nötige Schritte zum Publizieren (Android)
 Ziel: eine **fertig paketierte Datei (.apk)** erstellen.
 
-### 4.b APK Build (Vorschlag mit EAS Build)
-1. `npm install`
+**Variante A: EAS Build (empfohlen)**
+1. Abhängigkeiten installieren: `npm install`
 2. Expo Login: `npx expo login`
-3. EAS installieren: `npm i -g eas-cli`
+3. EAS CLI installieren: `npm i -g eas-cli`
 4. Projekt konfigurieren: `eas build:configure`
-5. Build starten: `eas build -p android --profile preview`
-6. APK im Expo Dashboard herunterladen
+5. Android Build starten: `eas build -p android --profile preview`
+6. APK aus dem Expo Dashboard herunterladen
 7. APK auf Android installieren und testen
 
-*(Alternativ: lokale Android-Builds via Gradle/Android Studio nach `expo prebuild`, falls nötig.)*
+## 4.b) Ergebnis (APK)
+- Datei: `BrainBites.apk`
+- Ablage (Empfehlung): GitHub Release (Assets) oder Ordner `./release/BrainBites.apk`
 
 ---
 
-## Aufgabe 5: Mobile App gemäss Testplan überprüfen
+# Aufgabe 5: Mobile App gemäss Testplan überprüfen
 
-Tests gemäss Testplan durchgeführt, Resultate dokumentiert:
+## 5.a) Tests durchführen & Ergebnisse festhalten
+Die Tests wurden gemäss Testplan durchgeführt. Ergebnisse und ggf. Fixes werden hier dokumentiert:
 
-| Testfall | Resultat | Notizen/Fixes |
-|---|---|---|
-| TC1 | OK / FAIL |  |
-| TC2 | OK / FAIL |  |
-| TC3 | OK / FAIL |  |
-| TC4 | OK / FAIL |  |
-| TC5 | OK / FAIL |  |
-| TC6 | OK / FAIL |  |
-| TC7 | OK / FAIL |  |
-| TC8 | OK / FAIL |  |
+| Testfall | Ergebnis (OK/FAIL) | Beobachtung | Fix (falls nötig) |
+|---|---|---|---|
+| TC1 |  |  |  |
+| TC2 |  |  |  |
+| TC3 |  |  |  |
+| TC4 |  |  |  |
+| TC5 |  |  |  |
+| TC6 |  |  |  |
+| TC7 |  |  |  |
+| TC8 |  |  |  |
+| TC9 |  |  |  |
+| TC10 |  |  |  |
+| TC11 |  |  |  |
+| TC12 |  |  |  |
 
 ---
 
-## Lokales Starten (für Bewertung)
+## Projekt lokal starten
 
 ```bash
 npm install
