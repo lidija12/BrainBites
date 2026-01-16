@@ -1,0 +1,46 @@
+# =========================
+# Root .gitignore for demo/
+# =========================
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+**/.idea/
+**/.vscode/
+**/*.iml
+
+
+# --- Logs ---
+**/*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# --- Dependencies / caches ---
+**/node_modules/
+**/.expo/
+**/.expo-shared/
+**/.gradle/
+**/.kotlin/
+**/.metro-health-check*
+
+# --- Build outputs ---
+**/build/
+**/dist/
+**/web-build/
+**/*.tsbuildinfo
+
+# --- Expo / env ---
+expo-env.d.ts
+.env
+.env.*
+.env*.local
+
+# --- Android / iOS local-only files ---
+**/android/local.properties
+**/*.jks
+**/*.p8
+**/*.p12
+**/*.key
+**/*.mobileprovision
+**/*.pem
