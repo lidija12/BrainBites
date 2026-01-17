@@ -8,7 +8,7 @@ Im Lernmodus können Karten umgedreht und durchgearbeitet werden. Zusätzlich gi
 - **Sensor:** Accelerometer → **Tilt-Erkennung (links/rechts)** → Karten mischen (Shuffle)
 - **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
 - **Persistente Speicherung:** Firebase Firestore → Decks/Karten dauerhaft speichern
-- **Authentifizierung:** Firebase Auth → E-Mail/Passwort
+- **Authentifizierung: Lokal (AsyncStorage) → Login/Register + Demo-User
 
 ---
 
@@ -17,30 +17,34 @@ Im Lernmodus können Karten umgedreht und durchgearbeitet werden. Zusätzlich gi
 > Hinweis: Die Struktur basiert auf **Expo Router** (file-based routing).
 
 ```text
-BrainBites/
-  app/
-    (tabs)/
-      _layout.js            # Tab-Navigation
-      index.js              # Deck-Übersicht (Home)
-      create.js             # Deck/Karte erstellen
-      settings.js           # Reminder + Logout
-    deck/
-      [deckId].js           # Deck-Detail
-      [deckId]/
-        study.js            # Lernmodus (Flashcards, Shuffle)
-    _layout.js              # Root Layout
-  lib/
-    firebase.js             # Firebase Init (Auth, Firestore)
-    seed.js                 # Beispiel-Decks / Seed-Daten (lokal)
-  state/
-    DeckStore.js            # State (Decks/Karten) / Datenlogik
-  assets/
-    icon.png
-  App.js
-  app.json
-  firestore.rules
-  package.json
-  README.md
+app/
+  login.js
+  _layout.js
+  (tabs)/
+    _layout.js
+    index.js
+    create.js
+    settings.js
+  deck/
+    [deckId]/
+      index.js
+      study.js
+      edit.js
+      cards/
+        [cardId]/
+          edit.js
+src/
+  auth/
+    auth.js
+  theme/
+    colors.js
+state/
+  DeckStore.js
+assets/
+  icon.png
+app.json
+package.json
+README.md
 
 ````
 ## Wichtige Komponenten (Screens/Dateien)
@@ -190,7 +194,7 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 | TC6  | Karte erstellen       | Deck existiert         | Karte hinzufügen → Speichern     | Karte erscheint im Deck              |
 | TC7  | Karte löschen         | Karte existiert        | Karte löschen                    | Karte ist entfernt                   |
 | TC8  | Lernmodus Flip        | Deck mit Karten        | Lernmodus → Karte antippen       | Karte flippt (Front/Back)            |
-| TC9  | Shuffle Trigger       | Lernmodus offen        | Shake / Navigation               | Kartenreihenfolge wird gemischt      |
+| TC9  | Shuffle Trigger       | Lernmodus offen        | Tilt links/rechts (Accelerometer)| Kartenreihenfolge wird gemischt      |
 | TC10 | Reminder aktivieren   | Permissions erlaubt    | Settings: Tage+Zeit → aktivieren | Reminder wird geplant                |
 | TC11 | Reminder deaktivieren | Reminder aktiv         | Settings → deaktivieren          | Reminder wird entfernt               |
 | TC12 | Firestore Persistenz  | Internet aktiv         | App neu starten                  | Eigene Decks/Karten bleiben erhalten |
