@@ -215,16 +215,6 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 
 ---
 
-Ja, du kannst das **1:1 copy-pasten** – die Formatierung ist bereits **README/GitHub-Markdown korrekt**.
-
-Wichtig ist nur:
-
-1. **Den alten 2.b Abschnitt komplett löschen/ersetzen**, damit du nicht zwei verschiedene Versionen drin hast.
-2. Achte darauf, dass du den Block **als Ganzes** übernimmst (inkl. `---` Trennlinien und den ```js Codeblöcken).
-
-Wenn du es ganz sauber willst, kopiere genau diesen Block (ist identisch und korrekt formatiert):
-
-````md
 ## 2.b) Umsetzung der Elemente (Sensor/Aktor, Storage, Auth)
 
 > In diesem Kapitel wird beschrieben, **wie** die geforderten Elemente technisch umgesetzt wurden (inkl. kurzer Code-Auszüge).  
@@ -449,13 +439,6 @@ export async function logout() {
   await signOut(auth);
 }
 ```
-
-```
-
-Wenn du magst, kann ich dir noch eine **Mini-Prüfliste** geben, welche Wörter du im restlichen README noch von **Shake → Tilt** ersetzen musst, damit alles konsistent ist.
-::contentReference[oaicite:0]{index=0}
-```
-
 
 ---
 
