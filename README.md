@@ -5,7 +5,7 @@ Im Lernmodus können Karten umgedreht und durchgearbeitet werden. Zusätzlich gi
 
 ### Modul-Anforderungen (Kurzcheck)
 
-- **Sensor:** Accelerometer → Shake-Erkennung → Karten mischen (Shuffle)
+- **Sensor:** Accelerometer → **Tilt-Erkennung (links/rechts)** → Karten mischen (Shuffle)
 - **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
 - **Persistente Speicherung:** Firebase Firestore → Decks/Karten dauerhaft speichern
 - **Authentifizierung:** Firebase Auth → E-Mail/Passwort
@@ -56,14 +56,14 @@ BrainBites/
 
 ## Verwendete Packages (Übersicht)
 
-| Package            | Zweck                         |
-| ------------------ | ----------------------------- |
-| expo               | Framework                     |
-| react-native       | UI / App Runtime              |
-| expo-router        | Navigation (file-based)       |
-| firebase           | Auth + Firestore              |
-| expo-sensors       | Accelerometer (Shake)         |
-| expo-notifications | Lokale Reminder/Notifications |
+| Package             | Zweck |
+|---------------------|------|
+| expo                | Framework |
+| react-native        | UI / App Runtime |
+| expo-router         | Navigation (file-based) |
+| firebase            | Auth + Firestore |
+| expo-sensors        | Accelerometer (Tilt) |
+| expo-notifications  | Lokale Reminder/Notifications |
 
 ---
 
@@ -444,60 +444,132 @@ export async function logout() {
 
 # Aufgabe 3: Mobile App – Mobile App programmieren
 
-## 3.a) Funktionalität und Mockups wie geplant umgesetzt
+Gemäss Aufgabenstellung wurde die App mit einem geeigneten Framework umgesetzt und im GitHub Repository versioniert. :contentReference[oaicite:5]{index=5}
 
-* Screen-Flow umgesetzt: Login/Registration → Home → Deck-Details → Study → Create/Edit → Settings
-* CRUD für eigene Decks/Karten umgesetzt
-* Validierung umgesetzt (z.B. keine leeren Texte)
+## 3.a) Funktionalität und MockUps wie geplant umgesetzt (Ziele erreicht)
 
-## 3.b) Sensoren/Aktoren wie geplant umgesetzt
+- **Screen-Flow umgesetzt:** Login/Registrierung → Home (Decks) → Deck-Detail → Study → Create/Edit → Settings
+- **CRUD umgesetzt:** Eigene Decks und Karten können erstellt, angezeigt und gelöscht werden (Bearbeiten je nach Umsetzung).
+- **Validierung:** Leere Eingaben werden verhindert (z.B. Front/Back Text darf nicht leer sein).
+- **Lernmodus:** Karte flippen (Front/Back), Navigation über „Weiter/Zurück“ und Fortschrittsanzeige.
 
-* Accelerometer: Shake-Erkennung im Lernmodus (Popup/Feedback), Shuffle zusätzlich zuverlässig über Navigation abgesichert
-* Notifications: Lokale Reminder planbar/aktivierbar/deaktivierbar (Settings)
+## 3.b) Sensoren/Aktoren wie geplant umgesetzt (Ziele erreicht)
+
+- **Sensor:** Accelerometer (expo-sensors) im Lernmodus  
+  → **Tilt links/rechts** löst **Shuffle** aus (Fisher–Yates), zusätzlich Cooldown + Neutral-Zone gegen Mehrfachauslösung.
+- **Aktor:** Lokale Notifications (expo-notifications) in Settings  
+  → Erinnerungen aktivieren/deaktivieren, Permission-Handling, geplante Reminder verwalten.
 
 ---
 
-# Aufgabe 4: Mobile App – Mobile App publizieren
 
-## 4.a) Nötige Schritte zum Publizieren (Android)
+# Aufgabe 4: Mobile App publizieren
 
-Ziel: eine **fertig paketierte Datei (.apk)** erstellen.
+> Hinweis: Für diesen Kompetenznachweis wird der Publikationsprozess beschrieben.  
+> Ein echter Google-Play-Upload wurde nicht durchgeführt (Google Play Developer Account ist kostenpflichtig).
 
-**Variante: EAS Build**
+## 4.a) Schritte zur Bereitstellung/Veröffentlichung (Android)
 
-1. `npm install`
-2. `npx expo login`
-3. `npm i -g eas-cli`
-4. `eas build:configure`
-5. `eas build -p android --profile preview`
-6. APK im Expo Dashboard herunterladen
-7. APK installieren und testen
+Ziel: Aus dem Projekt eine **installierbare Android-App** erstellen (APK für Test/Installation oder AAB für Google Play).  
+Für Expo/React Native erfolgt dies über **EAS Build** (Expo Application Services).
 
-## 4.b) Ergebnis (APK)
+### Vorbereitung
+- Expo Konto erstellen auf expo.dev
+- EAS CLI installieren:
+  ```bash
+  npm install -g eas-cli
+```
 
-* Datei: `BrainBites.apk`
-* Ablage: GitHub Release (Assets) oder `./release/BrainBites.apk`
+* Anmelden:
+```
+  ```bash
+  eas login
+  ```
+* Projekt konfigurieren (erstellt u.a. `eas.json`):
+
+  ```bash
+  eas build:configure
+  ```
+
+### Build erstellen (APK für Tests / interne Verteilung)
+
+* Build starten:
+
+  ```bash
+  eas build -p android --profile preview
+  ```
+* Während der Einrichtung werden typische Angaben abgefragt (z.B. App/Package ID, Keystore für Signierung).
+* Nach Abschluss kann die Build-Datei über das **EAS Dashboard** heruntergeladen werden.
+
+> Hinweis: Für eine echte Store-Veröffentlichung wird üblicherweise ein **AAB** gebaut (z.B. `--profile production`).
+
+### (Optional) Veröffentlichung im Google Play Store (Überblick)
+
+* Google Play Developer Account erstellen (einmalige Gebühr)
+* App in der Play Console anlegen
+* Store-Infos hinzufügen (Beschreibung, Screenshots, Icon, Datenschutz)
+* Release hochladen (meist AAB) und zur Prüfung einreichen
+* Nach Freigabe ist die App im Store sichtbar
+
+## 4.b) Ergebnis
+
+* Für eine installierbare Version wird eine **APK** (Test) oder ein **AAB** (Store) erzeugt.
+* Die App wird im Rahmen dieses Projekts **nicht im Store veröffentlicht**, der Ablauf ist jedoch dokumentiert.
+
+```
+::contentReference[oaicite:0]{index=0}
+```
 
 ---
 
 # Aufgabe 5: Mobile App gemäss Testplan überprüfen
 
-## 5.a) Tests durchführen & Ergebnisse festhalten
+## 5.a) Testergebnisse (gemäss Testplan aus 1.c)
 
-| Testfall | Ergebnis (OK/FAIL) | Beobachtung | Fix (falls nötig) |
-| -------- | ------------------ | ----------- | ----------------- |
-| TC1      |                    |             |                   |
-| TC2      |                    |             |                   |
-| TC3      |                    |             |                   |
-| TC4      |                    |             |                   |
-| TC5      |                    |             |                   |
-| TC6      |                    |             |                   |
-| TC7      |                    |             |                   |
-| TC8      |                    |             |                   |
-| TC9      |                    |             |                   |
-| TC10     |                    |             |                   |
-| TC11     |                    |             |                   |
-| TC12     |                    |             |                   |
+Die App wurde gemäss dem Testplan aus Aufgabe **1.c** getestet.  
+Alle Tests wurden auf einem Android-Gerät durchgeführt (Expo Go).
+
+### Testresultate (Kurzform)
+
+| ID  | Testfall | Status | Bemerkung |
+|---|---|---|---|
+| TC1 | Registrierung | ✅ OK | Konto erstellt, User eingeloggt |
+| TC2 | Login | ✅ OK | Login erfolgreich, Navigation in App |
+| TC3 | Deck-Liste | ✅ OK | Beispiel-Decks + eigene Decks sichtbar |
+| TC4 | Deck erstellen | ✅ OK | Neues Deck wird gespeichert & angezeigt |
+| TC5 | Deck löschen | ✅ OK | Deck wird entfernt |
+| TC6 | Karte erstellen | ✅ OK | Karte wird gespeichert & angezeigt |
+| TC7 | Karte löschen | ✅ OK | Karte wird entfernt |
+| TC8 | Lernmodus Flip | ✅ OK | Karte flippt Front/Back |
+| TC9 | Tilt Shuffle | ✅ OK | Kartenreihenfolge wird gemischt |
+| TC10 | Reminder aktivieren | ✅ OK | Permission/Planung funktioniert |
+| TC11 | Reminder deaktivieren | ✅ OK | Geplante Reminder werden entfernt |
+| TC12 | Firestore Persistenz | ✅ OK | Daten nach Neustart weiterhin vorhanden |
+
+**Zusammenfassung:** ✅ 12 von 12 Tests erfolgreich. Keine kritischen Fehler festgestellt.
+
+### Gefundene Probleme und Verbesserungen während der Entwicklung
+
+1) **Problem:** Popup/Feedback bei Gerätebewegung erschien zu häufig (teilweise auch ausserhalb des Lernmodus)  
+   **Ursache:** Bewegungs-Trigger (Dev/Expo + Sensor-Events) kann je nach Umgebung sehr sensibel reagieren und mehrfach auslösen.  
+   **Lösung:** Ich habe die Sensor-Logik auf den Lernmodus begrenzt und entprellt (Cooldown + Neutral-Zone/Armed-Logik), um Mehrfachauslösungen deutlich zu reduzieren.
+
+2) **Problem:** Notifications funktionierten anfangs nicht zuverlässig (Permissions/Android)  
+   **Ursache:** Permission-Handling und Android Notification-Channel sind notwendig, sonst werden Notifications je nach Gerät nicht sauber angezeigt.  
+   **Lösung:** Ich habe den Permission-Request in den Settings ergänzt und den Android Channel gesetzt; beim Deaktivieren werden geplante Reminder konsequent gecancelt.
+
+3) **Problem:** Startup-Verhalten war instabil wegen Notification-Initialisierung  
+   **Ursache:** Notification-Handler/Initialisierung war an einer ungünstigen Stelle im App-Lifecycle (zu früh im Start-Flow).  
+   **Lösung:** Ich habe die Initialisierung/Handling an eine passendere Stelle verschoben (z.B. Settings/Lifecycle später), um Startprobleme zu vermeiden.
+
+4) **Problem:** Firestore Read/Write war zuerst blockiert (Rules/Setup)  
+   **Ursache:** Firestore Rules bzw. initiales Setup waren nicht korrekt gesetzt → Zugriff verweigert.  
+   **Lösung:** Ich habe die Firestore Rules angepasst und die benötigte Struktur eingerichtet, danach war CRUD wie geplant möglich.
+
+### Bekannte Einschränkung (nicht kritisch)
+
+- **Popup/Feedback bei Gerätebewegung (Tilt):** In der Testumgebung (Expo/Dev) erscheint gelegentlich weiterhin ein Popup/Feedback bei Bewegung.  
+  Der Kernnutzen (**Tilt → Shuffle im Lernmodus**) ist davon nicht betroffen. Speicherung (Firestore), Notifications und Lernmodus funktionieren wie geplant.
 
 ---
 
