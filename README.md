@@ -215,66 +215,103 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 
 ---
 
+Ja, du kannst das **1:1 copy-pasten** – die Formatierung ist bereits **README/GitHub-Markdown korrekt**.
+
+Wichtig ist nur:
+
+1. **Den alten 2.b Abschnitt komplett löschen/ersetzen**, damit du nicht zwei verschiedene Versionen drin hast.
+2. Achte darauf, dass du den Block **als Ganzes** übernimmst (inkl. `---` Trennlinien und den ```js Codeblöcken).
+
+Wenn du es ganz sauber willst, kopiere genau diesen Block (ist identisch und korrekt formatiert):
+
+````md
 ## 2.b) Umsetzung der Elemente (Sensor/Aktor, Storage, Auth)
 
-> Die folgenden Codeblöcke sind **Standard-Auszüge**, um die Umsetzung zu dokumentieren.
-> In der App ist die Logik je nach Screen/Datei integriert (z.B. Study/Settings) oder ausgelagert.
-
-### Element 1: Sensor – Accelerometer (Shake → Shuffle)
-
-**Package:** `expo-sensors`
-**Ort:** z.B. `app/deck/[deckId]/study.js`
-
-**Standard-Auszug (Shake-Listener + Cooldown):**
-
-```js
-import { Accelerometer } from "expo-sensors";
-
-export function subscribeShake({ onShake, threshold = 1.6, cooldownMs = 900 }) {
-  let lastShake = 0;
-
-  Accelerometer.setUpdateInterval(100);
-
-  const sub = Accelerometer.addListener(({ x, y, z }) => {
-    const magnitude = Math.sqrt(x * x + y * y + z * z);
-    const now = Date.now();
-
-    if (magnitude > threshold && now - lastShake > cooldownMs) {
-      lastShake = now;
-      onShake?.();
-    }
-  });
-
-  return () => sub && sub.remove();
-}
-```
-
-**Standard-Auszug (Shuffle / Fisher-Yates):**
-
-```js
-export function shuffleArray(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-```
-
-**Projekt-Hinweis (aktueller Stand):**
-
-* Shake wird erkannt (Popup/Feedback).
-* Das tatsächliche Shuffle ist zusätzlich über Navigation (Swipe/Next/Prev) abgesichert, damit es zuverlässig demonstriert werden kann.
+> In diesem Kapitel wird beschrieben, **wie** die geforderten Elemente technisch umgesetzt wurden (inkl. kurzer Code-Auszüge).  
+> Die Codeblöcke sind bewusst gekürzt und zeigen nur die Kernlogik.
 
 ---
 
-### Element 2: Aktor – Notifications (Lern-Erinnerung)
+### Element 1: Sensor – Accelerometer (Tilt links/rechts → Shuffle)
+
+**Package:** `expo-sensors`  
+**Ort:** `app/deck/[deckId]/study.js`
+
+**Wofür?**  
+Im Lernmodus wird der Accelerometer genutzt, um eine deutliche Neigung nach links oder rechts zu erkennen. Bei erkannter Neigung werden die Karten **neu gemischt** (Shuffle), damit der Lernmodus mit einer neuen Reihenfolge weitergeht.
+
+**Funktionsweise**
+- Accelerometer wird im Lernmodus abonniert (Update-Intervall ca. 120ms).
+- Bei **Tilt links/rechts** über die `x`-Achse (Threshold) wird ein Shuffle ausgelöst.
+- Mit **Cooldown** (z.B. 900ms) und **Neutral-Zone** wird Mehrfachauslösung verhindert.
+- Shuffle mischt die Karten per **Fisher–Yates** und setzt den Lernmodus zurück (`index = 0`, `flipped = false`), damit der Effekt sichtbar ist.
+
+**Code-Auszug (Tilt + Cooldown + Neutral-Zone):**
+```js
+import { Accelerometer } from "expo-sensors";
+
+Accelerometer.setUpdateInterval(120);
+
+const COOLDOWN = 900;
+const TILT_THRESHOLD = 0.75;
+const NEUTRAL = 0.25;
+
+subRef.current = Accelerometer.addListener(({ x, y }) => {
+  const now = Date.now();
+
+  // wieder "scharf" wenn neutral
+  if (Math.abs(x) < NEUTRAL && Math.abs(y) < NEUTRAL) {
+    armedRef.current = true;
+  }
+  if (!armedRef.current) return;
+
+  const tiltLeft = x < -TILT_THRESHOLD;
+  const tiltRight = x > TILT_THRESHOLD;
+
+  if ((tiltLeft || tiltRight) && now - lastTiltRef.current > COOLDOWN) {
+    lastTiltRef.current = now;
+    armedRef.current = false;
+    shuffleCards(); // Fisher–Yates + index=0 + flipped=false
+  }
+});
+````
+
+**Code-Auszug (Shuffle / Fisher–Yates):**
+
+```js
+const shuffleCards = () => {
+  setCardsOrder((prev) => {
+    const arr = [...prev];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  });
+
+  setIndex(0);
+  setFlipped(false);
+};
+```
+
+---
+
+### Element 2: Aktor – Lokale Notifications (Lern-Erinnerung)
 
 **Package:** `expo-notifications`
-**Ort:** z.B. `app/(tabs)/settings.js`
+**Ort:** `app/(tabs)/settings.js`
 
-**Standard-Auszug (Permission + Channel):**
+**Wofür?**
+In den Settings können Lern-Erinnerungen aktiviert/deaktiviert werden. Die App plant lokale Notifications (z.B. wöchentlich nach Wochentag + Uhrzeit) und kann geplante Reminder wieder entfernen.
+
+**Funktionsweise**
+
+* Permission wird abgefragt (granted/denied wird behandelt).
+* Auf Android wird ein Notification-Channel gesetzt.
+* Reminder werden geplant (schedule) und IDs gespeichert.
+* Beim Deaktivieren werden die gespeicherten IDs gecancelt (cancel).
+
+**Code-Auszug (Permission + Channel):**
 
 ```js
 import * as Notifications from "expo-notifications";
@@ -296,12 +333,12 @@ export async function ensureAndroidChannel() {
 }
 ```
 
-**Standard-Auszug (weekly schedule + cancel):**
+**Code-Auszug (weekly schedule + cancel):**
 
 ```js
 export async function scheduleWeekly({ weekday, hour, minute }) {
   return Notifications.scheduleNotificationAsync({
-    content: { title: "BrainBites", body: "Zeit zum Lernen 👇" },
+    content: { title: "BrainBites", body: "Zeit zum Lernen" },
     trigger: { weekday, hour, minute, repeats: true, channelId: "reminders" },
   });
 }
@@ -315,12 +352,21 @@ export async function cancelAll(ids) {
 
 ---
 
-### Element 3: Persistente Speicherung – Firebase Firestore
+### Element 3: Persistente Speicherung – Firebase Firestore (Decks/Karten)
 
 **Package:** `firebase` (Firestore)
 **Ort:** `lib/firebase.js` + Datenlogik z.B. `state/DeckStore.js`
 
-**Standard-Auszug (Firebase Init):**
+**Wofür?**
+Eigene Decks und Karten werden dauerhaft gespeichert, damit sie nach dem App-Neustart wieder verfügbar sind.
+
+**Funktionsweise**
+
+* Firebase wird initialisiert (App + Firestore).
+* Decks/Karten werden in Firestore gespeichert und beim Start geladen.
+* CRUD: Deck/Karte erstellen, lesen, (optional) aktualisieren und löschen.
+
+**Code-Auszug (Firebase Init):**
 
 ```js
 import { initializeApp } from "firebase/app";
@@ -341,35 +387,53 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 ```
 
-**Standard-Auszug (CRUD Beispiel):**
+**Code-Auszug (CRUD Beispiel):**
 
 ```js
 import { db } from "../lib/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
 export async function createDeck(name, ownerUid) {
-  const ref = await addDoc(collection(db, "decks"), { name, ownerUid, createdAt: Date.now() });
+  const ref = await addDoc(collection(db, "decks"), {
+    name,
+    ownerUid,
+    createdAt: Date.now(),
+  });
   return ref.id;
 }
 
 export async function loadDecks() {
   const snap = await getDocs(collection(db, "decks"));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 ```
 
 ---
 
-### Element 4: Authentifizierung – Firebase Authentication
+### Element 4: Authentifizierung – Firebase Authentication (E-Mail/Passwort)
 
 **Package:** `firebase` (Auth)
 **Ort:** Login/Register Screen oder `src/auth/*`
 
-**Standard-Auszug (Login/Register/Logout):**
+**Wofür?**
+Benutzer können sich registrieren und einloggen. Dadurch können eigene Decks/Karten einem Benutzer zugeordnet werden.
+
+**Funktionsweise**
+
+* Registrierung mit E-Mail/Passwort (`createUserWithEmailAndPassword`)
+* Login mit E-Mail/Passwort (`signInWithEmailAndPassword`)
+* Logout (`signOut`)
+* Optional: Session-Check (`onAuthStateChanged`)
+
+**Code-Auszug (Login/Register/Logout):**
 
 ```js
 import { auth } from "../lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 export async function register(email, password) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -385,6 +449,13 @@ export async function logout() {
   await signOut(auth);
 }
 ```
+
+```
+
+Wenn du magst, kann ich dir noch eine **Mini-Prüfliste** geben, welche Wörter du im restlichen README noch von **Shake → Tilt** ersetzen musst, damit alles konsistent ist.
+::contentReference[oaicite:0]{index=0}
+```
+
 
 ---
 
