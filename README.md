@@ -71,24 +71,28 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 * Button: Login
 * Fehleranzeige bei falschen Eingaben
 * Navigation: "Account erstellen" → Registrierung
+<img width="440" height="956" alt="Screen 1@1x" src="https://github.com/user-attachments/assets/df901bc9-9814-4e0e-a451-9e0a72a45a03" />
 
 **Screen 2: Account erstellen (Registrierung)**
 
 * E-Mail + Passwort + Passwort bestätigen
 * Button: Registrieren
 * Navigation: Zurück zum Login
+<img width="440" height="956" alt="Screen 2@1x" src="https://github.com/user-attachments/assets/28d05ecc-7160-49cd-ae84-7813f95ed24f" />
 
 **Screen 3: Home / Deck-Übersicht**
 
 * Liste aller Decks (Beispiel-Decks + eigene Decks)
 * Button: „Neues Deck erstellen“
 * Navigation: Deck antippen → Deck-Details
+<img width="440" height="956" alt="Screen 3@1x" src="https://github.com/user-attachments/assets/22e3e60c-5bc1-473b-a430-8ab7dc063929" />
 
 **Screen 4: Deck-Details**
 
 * Deckname
 * Buttons: „Lernen starten“, „Karten verwalten“
 * Option: Deck bearbeiten
+<img width="440" height="956" alt="Screen 4@1x" src="https://github.com/user-attachments/assets/adca26a2-bfb7-4c66-8060-75617365d2f1" />
 
 **Screen 5: Lernmodus (Study)**
 
@@ -96,12 +100,15 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 * Navigation durch Karten (z.B. Buttons oder Swipe links/rechts)
 * Shuffle-Funktion vorhanden (siehe Sensor / Fallback unten)
 * Anzeige: Fortschritt (z.B. 3/20)
+<img width="440" height="956" alt="Screen 7@1x" src="https://github.com/user-attachments/assets/ba39a9c3-ad83-4502-a7e5-35808e1a6610" />
 
 **Screen 6: Karten verwalten (Create/Edit)**
 
 * Karte erstellen: Vorderseite + Rückseite
 * Kartenliste mit Bearbeiten(+)/Löschen
 * Speichern in Firebase Firestore
+<img width="440" height="956" alt="Screen 5@1x" src="https://github.com/user-attachments/assets/b331b1cf-636b-44b8-894f-9ffd2dfd4060" />
+<img width="440" height="956" alt="Screen 6@1x" src="https://github.com/user-attachments/assets/f5d00211-0ea1-4df4-b2b3-2bac8cdc8817" />
 
 **Screen 7: Einstellungen / Erinnerungen**
 
@@ -109,6 +116,7 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 * Wochentage und Uhrzeit definieren
 * Permissions abfragen
 * geplante Notifications verwalten (cancel/reschedule)
+<img width="440" height="956" alt="Screen 8@1x" src="https://github.com/user-attachments/assets/f41accf4-e8c7-4320-af26-200b9f6cde7b" />
 
 ---
 
@@ -139,12 +147,14 @@ Storyboard-Bilder: `./docs/storyboard/` (oder `./storyboard/`)
 * Navigation durch Karten ist möglich (z.B. Swipe links/rechts oder Buttons).
 * Fortschritt wird angezeigt.
 
-**Sensor-Funktion (Accelerometer / Shake)**
+**Sensor-Funktion (Accelerometer / Tilt-to-Shuffle)**
 
-* Der Accelerometer wird im Lernmodus genutzt, um ein Schütteln (Shake) zu erkennen.
-* Ziel: Bei Shake → Karten mischen (Shuffle).
-* **Aktueller Stand:** Shake-Trigger zeigt ein Popup/Feedback an, aber das Mischen wird nicht auf allen Geräten zuverlässig ausgelöst.
-* **Fallback (sicher):** Das Mischen ist zusätzlich über die Navigation (Swipe/Next/Prev) abgesichert, damit die Funktion zuverlässig demonstriert werden kann.
+- Im Lernmodus wird der **Accelerometer** (expo-sensors) verwendet, um die Bewegung bzw. Neigung des Geräts zu messen.
+- **Shuffle (Karten mischen)** bedeutet: Die Reihenfolge der Karten wird zufällig neu gemischt (Fisher–Yates), damit die Karten in einer neuen Reihenfolge gelernt werden können.
+- Die Shuffle-Funktion wird **zuverlässig ausgelöst**, wenn das Gerät **deutlich nach links oder rechts geneigt** wird (Tilt):
+  - Es wird ein **Threshold** verwendet (`TILT_THRESHOLD`), z.B. `x < -0.75` (links) oder `x > 0.75` (rechts).
+  - Damit es nicht dauernd auslöst, gibt es einen **Cooldown** (`COOLDOWN`, z.B. 900ms) und eine **Neutral-Zone** (`NEUTRAL`), in der das Gerät zuerst wieder „gerade“ sein muss, bevor erneut gemischt wird.
+- Nach einem erfolgreichen Shuffle wird der Lernmodus auf die **erste Karte zurückgesetzt** (`index = 0`) und die Karte wird wieder auf **Vorderseite** gesetzt (`flipped = false`), damit der Effekt klar sichtbar ist.
 
 **Aktor-Funktion (Lokale Notifications)**
 
