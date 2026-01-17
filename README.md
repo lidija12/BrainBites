@@ -474,19 +474,18 @@ Ziel: Aus dem Projekt eine **installierbare Android-App** erstellen (APK für Te
 Für Expo/React Native erfolgt dies über **EAS Build** (Expo Application Services).
 
 ### Vorbereitung
-- Expo Konto erstellen auf expo.dev
-- EAS CLI installieren:
-  ```bash
-  npm install -g eas-cli
-```
+- Expo Konto erstellen auf `expo.dev`
 
+- EAS CLI installieren:
+```bash
+npm install -g eas-cli
+```
 * Anmelden:
 ```
   ```bash
   eas login
   ```
 * Projekt konfigurieren (erstellt u.a. `eas.json`):
-
   ```bash
   eas build:configure
   ```
@@ -494,7 +493,6 @@ Für Expo/React Native erfolgt dies über **EAS Build** (Expo Application Servic
 ### Build erstellen (APK für Tests / interne Verteilung)
 
 * Build starten:
-
   ```bash
   eas build -p android --profile preview
   ```
