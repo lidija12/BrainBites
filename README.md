@@ -43,6 +43,14 @@ BrainBites/
   README.md
 
 ````
+## Wichtige Komponenten (Screens/Dateien)
+
+- **Decks Screen (`app/(tabs)/index.js`)**: Deck-Liste (Built-in + User-Decks)
+- **Deck-Detail (`app/deck/[deckId].js`)**: Deck-Infos und Navigation zum Lernmodus
+- **Learn/Study Screen (`app/deck/[deckId]/study.js`)**: Karten anzeigen, Flip, Next/Prev, **Tilt→Shuffle (Accelerometer)**
+- **Create Screen (`app/(tabs)/create.js`)**: Deck/Karte erstellen, Validierung, Speichern (Firestore)
+- **Settings Screen (`app/(tabs)/settings.js`)**: Reminder (Notifications) + (optional) Logout
+- **DeckStore (`state/DeckStore.js`)**: Zentrale State-/Datenlogik für Decks & Karten
 
 ---
 
