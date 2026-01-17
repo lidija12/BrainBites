@@ -46,11 +46,12 @@ app.json
 package.json
 README.md
 
+
 ````
 ## Wichtige Komponenten (Screens/Dateien)
 
 - **Decks Screen (`app/(tabs)/index.js`)**: Deck-Liste (Built-in + User-Decks)
-- **Deck-Detail (`app/deck/[deckId].js`)**: Deck-Infos und Navigation zum Lernmodus
+- **Deck-Detail (`app/deck/[deckId]/index.js`)**: Deck-Infos und Navigation zum Lernmodus
 - **Learn/Study Screen (`app/deck/[deckId]/study.js`)**: Karten anzeigen, Flip, Next/Prev, **Tilt→Shuffle (Accelerometer)**
 - **Create Screen (`app/(tabs)/create.js`)**: Deck/Karte erstellen, Validierung, Speichern (Firestore)
 - **Settings Screen (`app/(tabs)/settings.js`)**: Reminder (Notifications) + (optional) Logout
@@ -65,9 +66,11 @@ README.md
 | expo                | Framework |
 | react-native        | UI / App Runtime |
 | expo-router         | Navigation (file-based) |
-| firebase            | Auth + Firestore |
+| firebase            | Firestore (persistente Speicherung) |
 | expo-sensors        | Accelerometer (Tilt) |
 | expo-notifications  | Lokale Reminder/Notifications |
+| @react-native-async-storage/async-storage | Lokale Speicherung (Auth-Session + Users) |
+
 
 ---
 
@@ -404,44 +407,32 @@ export async function loadDecks() {
 
 ---
 
-### Element 4: Authentifizierung – Firebase Authentication (E-Mail/Passwort)
+### Element 4: Authentifizierung – Lokal (AsyncStorage) (E-Mail/Passwort)
 
-**Package:** `firebase` (Auth)
-**Ort:** Login/Register Screen oder `src/auth/*`
+**Package:** `@react-native-async-storage/async-storage`  
+**Ort:** `src/auth/auth.js` + `app/login.js`
 
-**Wofür?**
-Benutzer können sich registrieren und einloggen. Dadurch können eigene Decks/Karten einem Benutzer zugeordnet werden.
+**Wofür?**  
+Benutzer können sich registrieren und einloggen. Die User werden lokal gespeichert (AsyncStorage). Zusätzlich gibt es einen Demo-User für Tests.
 
 **Funktionsweise**
+- Registrierung prüft, ob E-Mail schon existiert und speichert neue User lokal.
+- Login prüft E-Mail/Passwort lokal.
+- Session (aktueller User) wird separat gespeichert (`CURRENT_KEY`).
+- Logout entfernt die Session.
 
-* Registrierung mit E-Mail/Passwort (`createUserWithEmailAndPassword`)
-* Login mit E-Mail/Passwort (`signInWithEmailAndPassword`)
-* Logout (`signOut`)
-* Optional: Session-Check (`onAuthStateChanged`)
-
-**Code-Auszug (Login/Register/Logout):**
-
+**Code-Auszug (Auth-Logik lokal):**
 ```js
-import { auth } from "../lib/firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export async function register(email, password) {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  return cred.user;
-}
+const USERS_KEY = "bb_users_v1";
+const CURRENT_KEY = "bb_current_user_v1";
 
-export async function login(email, password) {
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  return cred.user;
-}
+export async function login(email, password) { /* ... */ }
+export async function register(email, password) { /* ... */ }
+export async function logout() { /* ... */ }
+export async function getCurrentUser() { /* ... */ }
 
-export async function logout() {
-  await signOut(auth);
-}
 ```
 
 ---
@@ -580,8 +571,4 @@ Alle Tests wurden auf einem Android-Gerät durchgeführt (Expo Go).
 ```bash
 npm install
 npx expo start
-```
-
-```
-::contentReference[oaicite:0]{index=0}
 ```
