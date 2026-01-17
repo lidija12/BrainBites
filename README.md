@@ -482,20 +482,20 @@ npm install -g eas-cli
 ```
 * Anmelden:
 ```
-  ```bash
-  eas login
-  ```
+```bash
+eas login
+```
 * Projekt konfigurieren (erstellt u.a. `eas.json`):
-  ```bash
-  eas build:configure
-  ```
+```bash
+eas build:configure
+ ```
 
 ### Build erstellen (APK für Tests / interne Verteilung)
 
 * Build starten:
-  ```bash
-  eas build -p android --profile preview
-  ```
+```bash
+eas build -p android --profile preview
+```
 * Während der Einrichtung werden typische Angaben abgefragt (z.B. App/Package ID, Keystore für Signierung).
 * Nach Abschluss kann die Build-Datei über das **EAS Dashboard** heruntergeladen werden.
 
