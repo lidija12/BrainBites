@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import { DeckProvider, useDecks } from "../state/DeckStore";
 import { LogBox } from "react-native";
 
-// ✅ Expo Go: diese Warnung nervt, ist aber "nur" remote-push (lokale Notifications gehen trotzdem)
+//Expo Go: diese Warnung nervt, ist aber "nur" remote-push (lokale Notifications gehen trotzdem)
 LogBox.ignoreLogs([
     "expo-notifications: Android Push notifications (remote notifications) functionality",
 ]);
@@ -26,7 +26,7 @@ export default function RootLayout() {
                 {/* Tabs */}
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-                {/* ✅ WICHTIG: index file ist "deck/[deckId]" (nicht /index) */}
+                {/* WICHTIG: index file ist "deck/[deckId]" (nicht /index) */}
                 <Stack.Screen
                     name="deck/[deckId]"
                     options={{

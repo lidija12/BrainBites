@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-nativ
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useDecks } from "../../../state/DeckStore";
-import { COLORS } from "../../../src/theme/colors"; // ✅ FIX
+import { COLORS } from "../../../src/theme/colors";
 
 export default function DeckEdit() {
     const { deckId } = useLocalSearchParams();

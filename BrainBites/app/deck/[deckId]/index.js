@@ -5,7 +5,7 @@ import React from "react";
 import { View, Text, Pressable, FlatList, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useDecks } from "../../../state/DeckStore";
-import { COLORS } from "../../../src/theme/colors"; // ✅ FIX: richtiger Pfad
+import { COLORS } from "../../../src/theme/colors"; //richtiger Pfad
 import { Stack } from "expo-router";
 
 
@@ -64,22 +64,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 18,
-        backgroundColor: COLORS.bg, // ✅
+        backgroundColor: COLORS.bg,
         gap: 8,
     },
 
-    title: { fontSize: 24, fontWeight: "800", color: COLORS.text }, // ✅
-    subtitle: { marginTop: 6, opacity: 0.75, color: COLORS.text }, // ✅
+    title: { fontSize: 24, fontWeight: "800", color: COLORS.text },
+    subtitle: { marginTop: 6, opacity: 0.75, color: COLORS.text },
 
     sectionTitle: {
         marginTop: 18,
         marginBottom: 10,
         fontSize: 16,
         fontWeight: "800",
-        color: COLORS.text, // ✅
+        color: COLORS.text,
     },
 
-    // ✅ Secondary Button (white)
+    // Secondary Button (white)
     secondaryButton: {
         marginTop: 12,
         padding: 12,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     },
     secondaryButtonText: { fontWeight: "800", color: COLORS.text },
 
-    // ✅ Primary Button (sage)
+    //Primary Button (sage)
     primaryButton: {
         marginTop: 14,
         padding: 12,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     },
     primaryButtonText: { fontWeight: "900", color: "#fff" },
 
-    // ✅ Card rows
+    //Card rows
     cardRow: {
         padding: 12,
         borderWidth: 1,

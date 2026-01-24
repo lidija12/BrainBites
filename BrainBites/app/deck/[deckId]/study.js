@@ -1,12 +1,12 @@
 // app/deck/[deckId]/study.js
 // Lernmodus: Karte flippen + Richtig/Falsch + Ergebnis + ✅ Tilt (links/rechts) Shuffle
 
-import React, { useMemo, useState, useEffect, useRef } from "react"; // ✅ useRef dazu
+import React, { useMemo, useState, useEffect, useRef } from "react"; //useRef dazu
 import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useDecks } from "../../../state/DeckStore";
 import { COLORS } from "../../../src/theme/colors";
-import { Accelerometer } from "expo-sensors"; // ✅ NEW
+import { Accelerometer } from "expo-sensors"; //NEW
 
 export default function StudyScreen() {
     const { deckId } = useLocalSearchParams();
@@ -17,19 +17,19 @@ export default function StudyScreen() {
         [decks, deckId]
     );
 
-    // ✅ NEW: lokale Karten-Reihenfolge (damit Shuffle nur hier wirkt)
+    //lokale Karten-Reihenfolge (damit Shuffle nur hier wirkt)
     const [cardsOrder, setCardsOrder] = useState([]);
     const cards = cardsOrder.length ? cardsOrder : (deck?.cards ?? []);
 
     const [index, setIndex] = useState(0);
     const [flipped, setFlipped] = useState(false);
 
-    // ✅ Antworten pro Karte speichern: { [cardId]: "correct" | "wrong" }
+    //Antworten pro Karte speichern: { [cardId]: "correct" | "wrong" }
     const [answers, setAnswers] = useState({});
 
     const card = cards[index];
 
-    // ✅ Deck-Wechsel / Reload -> reset + Karten-Order setzen
+    //Deck-Wechsel / Reload -> reset + Karten-Order setzen
     useEffect(() => {
         setIndex(0);
         setFlipped(false);
@@ -38,7 +38,7 @@ export default function StudyScreen() {
     }, [deckId, deck?.cards?.length]); // deckId reicht meist, length hilft bei neu geladenen Karten
 
     // -----------------------------
-    // ✅ Tilt-to-Shuffle (links/rechts neigen)
+    //Tilt-to-Shuffle (links/rechts neigen)
     // -----------------------------
     const subRef = useRef(null);
     const lastTiltRef = useRef(0);
@@ -174,7 +174,7 @@ export default function StudyScreen() {
                 </Text>
             </View>
 
-            {/* ✅ Live Stats */}
+            {/* Live Stats */}
             <View style={styles.statsRow}>
                 <View style={styles.statPill}><Text style={styles.statText}>✅ {correctCount}</Text></View>
                 <View style={styles.statPill}><Text style={styles.statText}>❌ {wrongCount}</Text></View>

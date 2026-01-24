@@ -3,7 +3,7 @@ export const COLORS = {
     bg: "rgba(156,216,204,0.6)",
     card: "#FFFFFF",
     text: "#111827",
-    mutedText: "#6B7280", // ✅ NEW: für Placeholders/Hint-Text
+    mutedText: "#6B7280", //für Placeholders/Hint-Text
     border: "#E5E7EB",
 
     primary: "#2F6F5E",

@@ -16,7 +16,7 @@ import {
     Keyboard,
 } from "react-native";
 import { useDecks } from "../../state/DeckStore";
-import { COLORS } from "../../src/theme/colors"; // ✅ NEW
+import { COLORS } from "../../src/theme/colors";
 
 export default function CreateScreen() {
     const { decks, addDeck, addCard } = useDecks();
@@ -62,7 +62,7 @@ export default function CreateScreen() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <KeyboardAvoidingView
-                style={{ flex: 1, backgroundColor: COLORS.bg }} // ✅
+                style={{ flex: 1, backgroundColor: COLORS.bg }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={90}
             >
@@ -160,31 +160,31 @@ const styles = StyleSheet.create({
         padding: 18,
         paddingBottom: 40,
         gap: 12,
-        backgroundColor: COLORS.bg, // ✅
+        backgroundColor: COLORS.bg,
     },
 
-    title: { fontSize: 24, fontWeight: "900", color: COLORS.text }, // ✅
+    title: { fontSize: 24, fontWeight: "900", color: COLORS.text },
 
     card: {
-        backgroundColor: COLORS.card, // ✅
-        borderColor: COLORS.border, // ✅
+        backgroundColor: COLORS.card,
+        borderColor: COLORS.border,
         borderWidth: 1,
         borderRadius: 16,
         padding: 14,
         gap: 10,
     },
 
-    sectionTitle: { fontSize: 16, fontWeight: "900", color: COLORS.text }, // ✅
-    label: { opacity: 0.75, marginTop: 4, color: COLORS.text }, // ✅
+    sectionTitle: { fontSize: 16, fontWeight: "900", color: COLORS.text },
+    label: { opacity: 0.75, marginTop: 4, color: COLORS.text },
 
     input: {
         borderWidth: 1,
-        borderColor: COLORS.border, // ✅
+        borderColor: COLORS.border,
         borderRadius: 12,
         paddingHorizontal: 12,
         paddingVertical: 10,
         backgroundColor: "#fff",
-        color: COLORS.text, // ✅
+        color: COLORS.text,
     },
 
     multiInput: {
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
 
     primaryBtn: {
         borderWidth: 1,
-        borderColor: COLORS.primary, // ✅
-        backgroundColor: COLORS.primary, // ✅
+        borderColor: COLORS.primary,
+        backgroundColor: COLORS.primary,
         borderRadius: 12,
         paddingVertical: 12,
         alignItems: "center",
@@ -205,18 +205,18 @@ const styles = StyleSheet.create({
 
     deckChip: {
         borderWidth: 1,
-        borderColor: COLORS.border, // ✅
-        backgroundColor: COLORS.card, // ✅
+        borderColor: COLORS.border,
+        backgroundColor: COLORS.card,
         borderRadius: 999,
         paddingHorizontal: 12,
         paddingVertical: 8,
     },
     deckChipActive: {
-        backgroundColor: COLORS.primary, // ✅
-        borderColor: COLORS.primary, // ✅
+        backgroundColor: COLORS.primary,
+        borderColor: COLORS.primary,
     },
     deckChipText: { fontWeight: "800", color: COLORS.text },
     deckChipTextActive: { color: "#fff" },
 
-    hint: { marginTop: 2, opacity: 0.65, color: COLORS.text }, // ✅
+    hint: { marginTop: 2, opacity: 0.65, color: COLORS.text },
 });

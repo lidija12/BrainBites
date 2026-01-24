@@ -30,7 +30,7 @@ export default function LoginScreen() {
         })();
     }, []);
 
-    // ✅ Wenn Mode wechselt -> Felder leeren
+    //Wenn Mode wechselt -> Felder leeren
     useEffect(() => {
         setEmail("");
         setPassword("");
@@ -48,7 +48,7 @@ export default function LoginScreen() {
             if (mode === "login") await login(e, password);
             else await register(e, password);
 
-            // ✅ nach Erfolg leeren
+            //nach Erfolg leeren
             setEmail("");
             setPassword("");
             router.replace("/(tabs)");
@@ -81,9 +81,9 @@ export default function LoginScreen() {
                             keyboardType="email-address"
                             value={email}
                             onChangeText={setEmail}
-                            importantForAutofill="no"     // ✅ Android: weniger Autofill
-                            autoComplete="off"            // ✅
-                            textContentType="none"        // ✅ iOS
+                            importantForAutofill="no"
+                            autoComplete="off"
+                            textContentType="none"
                             returnKeyType="next"
                         />
 

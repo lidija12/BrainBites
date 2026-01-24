@@ -8,7 +8,7 @@ async function loadUsers() {
     const raw = await AsyncStorage.getItem(USERS_KEY);
     const users = raw ? JSON.parse(raw) : [];
 
-    // ✅ Wenn noch keine Users existieren -> Demo-User automatisch anlegen
+    //Wenn noch keine Users existieren -> Demo-User automatisch anlegen
     if (!Array.isArray(users) || users.length === 0) {
         const seeded = [DEMO_USER];
         await AsyncStorage.setItem(USERS_KEY, JSON.stringify(seeded));
