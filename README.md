@@ -434,6 +434,8 @@ export async function logout() { /* ... */ }
 export async function getCurrentUser() { /* ... */ }
 
 ```
+> **Hinweis:** Die Authentifizierung ist bewusst vereinfacht umgesetzt. Passwörter werden im Rahmen dieses Modulprojekts **nicht gehasht**, da der Fokus auf der Umsetzung von Sensor (Accelerometer), Aktor (Notifications) und persistenter Speicherung liegt.
+
 
 ---
 
