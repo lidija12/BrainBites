@@ -414,13 +414,18 @@ export async function loadDecks() {
 **Ort:** `src/auth/auth.js` + `app/login.js`
 
 **Wofür?**  
-Benutzer können sich registrieren und einloggen. Die User werden lokal gespeichert (AsyncStorage). Zusätzlich gibt es einen Demo-User für Tests.
+Benutzer können sich registrieren und einloggen. Die User werden lokal in **AsyncStorage** gespeichert. Zusätzlich wird beim ersten Start automatisch ein **Demo-User** angelegt (für Tests).
 
 **Funktionsweise**
-- Registrierung prüft, ob E-Mail schon existiert und speichert neue User lokal.
-- Login prüft E-Mail/Passwort lokal.
+- Users werden unter `USERS_KEY` gespeichert (Liste von Accounts).
+- Beim ersten Start (wenn noch keine Users vorhanden) wird automatisch ein Demo-User gespeichert.
+- Registrierung prüft, ob die E-Mail bereits existiert, speichert den neuen User und setzt die Session.
+- Login prüft E-Mail/Passwort lokal und setzt die Session.
 - Session (aktueller User) wird separat gespeichert (`CURRENT_KEY`).
 - Logout entfernt die Session.
+
+**Demo-User (Seed)**
+- `demo@brainbites.ch` / `demo1234`
 
 **Code-Auszug (Auth-Logik lokal):**
 ```js
@@ -428,15 +433,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const USERS_KEY = "bb_users_v1";
 const CURRENT_KEY = "bb_current_user_v1";
+const DEMO_USER = { email: "demo@brainbites.ch", password: "demo1234" };
 
-export async function login(email, password) { /* ... */ }
 export async function register(email, password) { /* ... */ }
+export async function login(email, password) { /* ... */ }
 export async function logout() { /* ... */ }
 export async function getCurrentUser() { /* ... */ }
 
-```
-> **Hinweis:** Die Authentifizierung ist bewusst vereinfacht umgesetzt. Passwörter werden im Rahmen dieses Modulprojekts **nicht gehasht**, da der Fokus auf der Umsetzung von Sensor (Accelerometer), Aktor (Notifications) und persistenter Speicherung liegt.
 
+```
+> **Hinweis:** Die Authentifizierung ist bewusst vereinfacht umgesetzt. Passwörter werden im Rahmen dieses Modulprojekts nicht gehasht, da der Fokus auf der Umsetzung von Sensor (Accelerometer), Aktor (Notifications) und persistenter Speicherung liegt.
 
 ---
 
