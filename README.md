@@ -5,10 +5,11 @@ Im Lernmodus können Karten umgedreht und durchgearbeitet werden. Zusätzlich gi
 
 ### Modul-Anforderungen (Kurzcheck)
 
-- **Sensor:** Accelerometer → **Tilt-Erkennung (links/rechts)** → Karten mischen (Shuffle)
-- **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
+- **2 Elemente (Sensor/Aktor):**
+  - **Sensor:** Accelerometer (Tilt links/rechts) → Karten mischen (Shuffle)
+  - **Aktor:** Lokale Notifications → Lern-Erinnerungen (planbar/aktivierbar/deaktivierbar)
 - **Persistente Speicherung:** Firebase Firestore → Decks/Karten dauerhaft speichern
-- **Authentifizierung: Lokal (AsyncStorage) → Login/Register + Demo-User
+- **Authentifizierung:** Lokal (AsyncStorage) → Login/Registrierung + Demo-User
 
 ---
 
@@ -441,7 +442,7 @@ export async function getCurrentUser() { /* ... */ }
 
 # Aufgabe 3: Mobile App – Mobile App programmieren
 
-Gemäss Aufgabenstellung wurde die App mit einem geeigneten Framework umgesetzt und im GitHub Repository versioniert. :contentReference[oaicite:5]{index=5}
+Gemäss Aufgabenstellung wurde die App mit einem geeigneten Framework umgesetzt und im GitHub Repository versioniert.
 
 ## 3.a) Funktionalität und MockUps wie geplant umgesetzt (Ziele erreicht)
 
@@ -510,10 +511,6 @@ eas build -p android --profile preview
 
 * Für eine installierbare Version wird eine **APK** (Test) oder ein **AAB** (Store) erzeugt.
 * Die App wird im Rahmen dieses Projekts **nicht im Store veröffentlicht**, der Ablauf ist jedoch dokumentiert.
-
-```
-::contentReference[oaicite:0]{index=0}
-```
 
 ---
 
